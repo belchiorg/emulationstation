@@ -69,14 +69,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libxcb1 \
         libxcb-dri3-0 \
         xkb-data \
-        # RetroArch + cores
+        # RetroArch + cores (arm64-available packages only)
         retroarch \
-        retroarch-data \
         libretro-mgba \
-        libretro-snes9x \
-        libretro-genesis-plus-gx \
         libretro-nestopia \
-        libretro-pcsx-rearmed \
         # Shared runtime deps for RetroArch and PCSX2
         libdbus-1-3 \
         libevdev2 \
