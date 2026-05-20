@@ -48,6 +48,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=extractor /opt/es-de /opt/es-de
 
 ENV HOME=/config \
-    XDG_DATA_HOME=/config/.local/share
+    XDG_DATA_HOME=/config/.local/share \
+    APPDIR=/opt/es-de \
+    LD_LIBRARY_PATH=/opt/es-de/usr/lib
 
-ENTRYPOINT ["/opt/es-de/AppRun", "--home", "/config"]
+# AppRun is an ELF that expects to be invoked inside a FUSE-mounted AppImage;
+# running it from an extracted directory causes a segfault. Call the binary directly.
+ENTRYPOINT ["/opt/es-de/usr/bin/es-de", "--home", "/config"]
