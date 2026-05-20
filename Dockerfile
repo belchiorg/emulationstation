@@ -42,6 +42,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libx11-xcb1 \
         libxcb1 \
         libxcb-dri3-0 \
+        xkb-data \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=extractor /opt/es-de /opt/es-de
