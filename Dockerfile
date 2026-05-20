@@ -22,17 +22,22 @@ RUN curl -fL "$ESDE_URL" -o /tmp/es-de.AppImage \
 
 FROM debian:trixie-slim
 
-# Runtime libraries not bundled inside the ES-DE AppImage
+# Runtime libraries not bundled inside the ES-DE AppImage.
+# libegl-mesa0 is the Mesa EGL implementation needed for V3D (Pi 5 GPU).
+# libwayland-client0 is required for the Wayland backend (SDL2 dlopen()s it).
+# X11 libs are kept for XWayland fallback.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libasound2t64 \
         libcom-err2 \
         libdrm2 \
         libegl1 \
+        libegl-mesa0 \
         libfontconfig1 \
         libfreetype6 \
         libfribidi0 \
         libgpg-error0 \
         libharfbuzz0b \
+        libwayland-client0 \
         libx11-6 \
         libx11-xcb1 \
         libxcb1 \
