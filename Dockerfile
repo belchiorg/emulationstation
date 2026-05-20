@@ -55,7 +55,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libudev1 \
         libvulkan1 \
         libwayland-egl1 \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -s /usr/lib/aarch64-linux-gnu/libretro /usr/lib/libretro
 
 COPY --from=extractor /opt/es-de /opt/es-de
 
