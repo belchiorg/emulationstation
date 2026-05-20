@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libasound2t64 \
         libcom-err2 \
         libdrm2 \
+        libegl1 \
         libfontconfig1 \
         libfreetype6 \
         libfribidi0 \
