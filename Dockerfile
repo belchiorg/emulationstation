@@ -22,6 +22,20 @@ RUN curl -fL "$ESDE_URL" -o /tmp/es-de.AppImage \
 
 FROM debian:trixie-slim
 
+# Runtime libraries not bundled inside the ES-DE AppImage
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libasound2t64 \
+        libdrm2 \
+        libfontconfig1 \
+        libfreetype6 \
+        libfribidi0 \
+        libharfbuzz0b \
+        libx11-6 \
+        libx11-xcb1 \
+        libxcb1 \
+        libxcb-dri3-0 \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --from=extractor /opt/es-de /opt/es-de
 
 ENV HOME=/config \
