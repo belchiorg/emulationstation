@@ -25,10 +25,12 @@ FROM debian:trixie-slim
 # Runtime libraries not bundled inside the ES-DE AppImage
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libasound2t64 \
+        libcom-err2 \
         libdrm2 \
         libfontconfig1 \
         libfreetype6 \
         libfribidi0 \
+        libgpg-error0 \
         libharfbuzz0b \
         libx11-6 \
         libx11-xcb1 \
