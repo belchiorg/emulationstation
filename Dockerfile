@@ -21,32 +21,6 @@ RUN curl -fL "$ESDE_URL" -o /tmp/es-de.AppImage \
     && rm /tmp/es-de.AppImage
 
 # ---------------------------------------------------------------------------
-# PCSX2 extractor — fetches the latest ARM64 AppImage from GitHub releases
-# and unpacks it with unsquashfs so we never need to execute the ARM binary
-# on the x86 CI runner.
-# ---------------------------------------------------------------------------
-FROM debian:trixie-slim AS pcsx2-extractor
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        curl \
-        ca-certificates \
-        python3 \
-        squashfs-tools \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY find-squashfs-offset.py /usr/local/bin/find-squashfs-offset.py
-
-RUN PCSX2_URL=$(curl -fsSL "https://api.github.com/repos/PCSX2/pcsx2/releases/latest" | \
-        python3 -c "import sys,json;assets=json.load(sys.stdin)['assets'];url=next((a['browser_download_url'] for a in assets if ('aarch64' in a['name'].lower() or 'arm64' in a['name'].lower()) and a['name'].lower().endswith('.appimage')),None);print(url) if url else exit(1)") \
-    && if [ -z "$PCSX2_URL" ]; then echo "ERROR: No PCSX2 ARM64 AppImage in latest release" && exit 1; fi \
-    && echo "Downloading PCSX2: $PCSX2_URL" \
-    && curl -fL "$PCSX2_URL" -o /tmp/pcsx2.AppImage \
-    && offset=$(python3 /usr/local/bin/find-squashfs-offset.py /tmp/pcsx2.AppImage) \
-    && echo "PCSX2 SquashFS offset: $offset" \
-    && unsquashfs -d /opt/pcsx2 -o "$offset" /tmp/pcsx2.AppImage \
-    && rm /tmp/pcsx2.AppImage
-
-# ---------------------------------------------------------------------------
 # Final image
 # ---------------------------------------------------------------------------
 FROM debian:trixie-slim
@@ -73,7 +47,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         retroarch \
         libretro-mgba \
         libretro-nestopia \
-        # Shared runtime deps for RetroArch and PCSX2
+        # RetroArch runtime deps
         libdbus-1-3 \
         libevdev2 \
         libglib2.0-0 \
@@ -84,14 +58,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=extractor /opt/es-de /opt/es-de
-COPY --from=pcsx2-extractor /opt/pcsx2 /opt/pcsx2
-
-# Create PCSX2 wrapper that sets the library path and calls the Qt binary
-RUN PCSX2_BIN=$(find /opt/pcsx2/usr/bin -type f \( -name "pcsx2-qt" -o -name "pcsx2" \) | head -1) \
-    && echo "Found PCSX2 binary: $PCSX2_BIN" \
-    && printf '#!/bin/sh\nexport LD_LIBRARY_PATH=/opt/pcsx2/usr/lib:$LD_LIBRARY_PATH\nexec %s "$@"\n' "$PCSX2_BIN" \
-        > /usr/local/bin/pcsx2 \
-    && chmod +x /usr/local/bin/pcsx2
 
 ENV HOME=/config \
     XDG_DATA_HOME=/config/.local/share \
