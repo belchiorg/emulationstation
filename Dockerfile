@@ -37,15 +37,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY find-squashfs-offset.py /usr/local/bin/find-squashfs-offset.py
 
 RUN PCSX2_URL=$(curl -fsSL "https://api.github.com/repos/PCSX2/pcsx2/releases/latest" | \
-        python3 -c "
-import sys, json
-assets = json.load(sys.stdin)['assets']
-for a in assets:
-    n = a['name'].lower()
-    if ('aarch64' in n or 'arm64' in n) and n.endswith('.appimage'):
-        print(a['browser_download_url'])
-        break
-") \
+        python3 -c "import sys,json;assets=json.load(sys.stdin)['assets'];url=next((a['browser_download_url'] for a in assets if ('aarch64' in a['name'].lower() or 'arm64' in a['name'].lower()) and a['name'].lower().endswith('.appimage')),None);print(url) if url else exit(1)") \
     && if [ -z "$PCSX2_URL" ]; then echo "ERROR: No PCSX2 ARM64 AppImage in latest release" && exit 1; fi \
     && echo "Downloading PCSX2: $PCSX2_URL" \
     && curl -fL "$PCSX2_URL" -o /tmp/pcsx2.AppImage \
