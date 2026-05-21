@@ -62,6 +62,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libqt6gui6 \
         libqt6widgets6 \
         libqt6dbus6 \
+        libcurl4t64 \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/lib/aarch64-linux-gnu/libretro /usr/lib/libretro
 
