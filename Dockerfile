@@ -63,6 +63,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libqt6widgets6 \
         libqt6dbus6 \
         libcurl4t64 \
+        qt6-wayland \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/lib/aarch64-linux-gnu/libretro /usr/lib/libretro
 
