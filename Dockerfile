@@ -60,6 +60,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=extractor /opt/es-de /opt/es-de
 
+# Wrapper for PCSX2 installed on the host and bind-mounted at /opt/pcsx2
+RUN printf '#!/bin/sh\nexport LD_LIBRARY_PATH=/opt/pcsx2/lib:$LD_LIBRARY_PATH\nexec /opt/pcsx2/bin/pcsx2-qt "$@"\n' \
+        > /usr/local/bin/pcsx2-qt \
+    && chmod +x /usr/local/bin/pcsx2-qt
+
 ENV HOME=/config \
     XDG_DATA_HOME=/config/.local/share \
     APPDIR=/opt/es-de \
