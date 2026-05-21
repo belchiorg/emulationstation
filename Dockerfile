@@ -55,6 +55,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libudev1 \
         libvulkan1 \
         libwayland-egl1 \
+        # PCSX2 runtime deps (host-built binary bind-mounted at /opt/pcsx2)
+        libsdl3-0 \
+        libpcap0.8 \
+        libqt6core6t64 \
+        libqt6gui6 \
+        libqt6widgets6 \
+        libqt6dbus6 \
     && rm -rf /var/lib/apt/lists/* \
     && ln -s /usr/lib/aarch64-linux-gnu/libretro /usr/lib/libretro
 
